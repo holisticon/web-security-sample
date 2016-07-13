@@ -1,12 +1,27 @@
+angular-spring-boot-webapp/tmp/
+angular-spring-boot-webapp/.tmp/
+angular-spring-boot-webapp/.sass-cache/
+angular-spring-boot-webapp/bower_components/
+angular-spring-boot-webapp/node/
+angular-spring-boot-webapp/node_modules/
+angular-spring-boot-webapp/src/main/resources/static/*
+
+# Eclipse files
+**/.project
+**/.settings/
+**/.classpath
 *.class
+**/target
+**/bin
+**/.springBeans
+Procfile
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# IDEA files
+.idea/*
+*.iml
+*.ipr
+*.iws
+*.log
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+# Vagrant
+.vagrant/*
