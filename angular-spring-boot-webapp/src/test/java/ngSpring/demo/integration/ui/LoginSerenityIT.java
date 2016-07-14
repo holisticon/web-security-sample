@@ -28,8 +28,6 @@ public class LoginSerenityIT extends AbstractSerenityITTestBase {
 
     private String password;
 
-    private boolean fail;
-
     @WithTags({
             @WithTag(type = "feature", name = "Login"),
             @WithTag(type = "feature", name = "User"),
@@ -39,10 +37,6 @@ public class LoginSerenityIT extends AbstractSerenityITTestBase {
     @Issues(value = {"#9"})
     public void loginShouldWork() {
         loginSteps.performLogin(this.username, this.password);
-        if (fail) {
-            loginSteps.userShouldSeeAnErrorMessage();
-        } else {
-            loginSteps.userShouldSeeNoErrorMessage();
-        }
+        loginSteps.userShouldSeeNoErrorMessage();
     }
 }
