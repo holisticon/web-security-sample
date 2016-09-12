@@ -19,7 +19,7 @@ node {
 
     stage 'Integration-Tests'
     node('mac') {
-        sh "${mvnHome}/bin/mvn -Pdocker -Ddocker.host=http://127.0.0.1:2375  clean verify -Dmaven.test.failure.ignore"
+        sh "mvn -Pdocker -Ddocker.host=http://127.0.0.1:2375  clean verify -Dmaven.test.failure.ignore"
     }
 
     step([
