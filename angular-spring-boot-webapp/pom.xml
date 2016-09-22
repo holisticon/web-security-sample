@@ -50,6 +50,7 @@
         <flyway-maven-plugin.version>3.2.1</flyway-maven-plugin.version>
         <docker-maven-plugin.version>2.11.4</docker-maven-plugin.version>
         <frontend-maven-plugin.version>1.0</frontend-maven-plugin.version>
+        <owasp-dependency-check.version>1.4.0</owasp-dependency-check.version>
     </properties>
 
     <dependencies>
@@ -189,6 +190,17 @@
         <defaultGoal>clean install</defaultGoal>
         <finalName>ng-spring-boot</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- tag::frontend-maven-plugin[] -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
@@ -395,10 +407,76 @@
                     <artifactId>docker-maven-plugin</artifactId>
                     <version>${docker-maven-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>${owasp-dependency-check.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
     <profiles>
+        <profile>
+            <id>securityCheck</id>
+            <properties>
+                <skipUnitTests>true</skipUnitTests>
+                <skipITs>true</skipITs>
+                <skipTests>true</skipTests>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- tag::owasp-maven-include[] -->
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <configuration>
+                            <failBuildOnCVSS>5</failBuildOnCVSS>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- end::owasp-maven-include[] -->
+                    <!-- tag::nsp-maven-include[] -->
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>${frontend-maven-plugin.version}</version>
+                        <configuration>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>install node and npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <nodeVersion>${node.version}</nodeVersion>
+                                    <npmVersion>${npm.version}</npmVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm check</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <arguments>run check</arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- end::nsp-maven-include[] -->
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>mac</id>
             <activation>
