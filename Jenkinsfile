@@ -3,15 +3,15 @@ node {
     def mvnHome = tool 'Maven 3.3.1'
     env.PATH = "${env.JAVA_HOME}/bin:${mvnHome}/bin:${env.PATH}"
 
-    stage 'Checkout' {
+    stage('Checkout') {
         checkout scm
     }
 
-    stage 'Build' {
+    stage('Build') {
         sh "${mvnHome}/bin/mvn clean package"
     }
 
-    stage 'Unit-Tests' {
+    stage('Unit-Tests') {
         sh "${mvnHome}/bin/mvn test -Dmaven.test.failure.ignore"
 
         step([
@@ -20,12 +20,12 @@ node {
         ])
     }
 
-    stage 'Integration-Tests' {
+    stage('Integration-Tests') {
         node('docker') {
             sh "${mvnHome}/bin/mvn -Pdocker -Ddocker.host=http://127.0.0.1:2375  clean verify -Dmaven.test.failure.ignore"
         }
     }
-    stage 'Security Checks' {
+    stage('Security Checks') {
         sh "${mvnHome}/bin/mvn -PsecurityCheck install"
         publishHTML(target: [
                 reportDir            : 'angular-spring-boot-web-app/target',
