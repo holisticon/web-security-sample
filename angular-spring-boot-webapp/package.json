@@ -47,6 +47,7 @@
     "karma-phantomjs-launcher": "1.0.1",
     "load-grunt-tasks": "3.1.0",
     "node-sass-prebuilt": "3.7.1",
+    "nsp": "2.4.0",
     "phantomjs": "1.9.17",
     "node-sass": "2.1.1",
     "phantomjs": "2.1.7",
@@ -59,6 +60,7 @@
     "node": ">= 4.2.x"
   },
   "scripts": {
+    "check": "npm install && nsp check",
     "postinstall": "bower install",
     "build": "grunt build",
     "start": "npm install && grunt serve",
