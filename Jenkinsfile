@@ -18,12 +18,12 @@ node {
         }
 
         stage('Unit-Tests') {
-            sh "${mvnHome}/bin/mvn test -Dmaven.test.failure.ignore"
-
-            step([
-                    $class     : 'JUnitResultArchiver',
-                    testResults: 'angular-spring-boot-webapp/target/surefire-reports/TEST*.xml'
-            ])
+            try {
+                sh "${mvnHome}/bin/mvn test -Dmaven.test.failure.ignore"
+            } catch (err) {
+                junit '**/target/surefire-reports/TEST-*.xml'
+                throw err
+            }
         }
 
         node('docker') {
@@ -32,7 +32,20 @@ node {
             stage('Integration-Tests') {
                 env.JAVA_HOME = '/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/'
                 env.PATH = "${env.JAVA_HOME}/bin:/usr/local/bin/bin:${env.PATH}"
-                sh "mvn -Pdocker -Ddocker.host=http://127.0.0.1:2375  clean verify -Dmaven.test.failure.ignore"
+                try {
+                    sh "mvn -Pdocker -Ddocker.host=http://127.0.0.1:2375  clean verify -Dmaven.test.failure.ignore"
+                } catch (err) {
+                    publishHTML(target: [
+                            reportDir            : 'angular-spring-boot-webapp/target/site/serenity/',
+                            reportFiles          : 'index.html',
+                            reportName           : 'Serenity Test Report',
+                            keepAll              : true,
+                            alwaysLinkToLastBuild: true,
+                            allowMissing         : false
+                    ])
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    throw err
+                }
 
             }
 
@@ -53,18 +66,6 @@ node {
                 $class     : 'ArtifactArchiver',
                 artifacts  : '**/target/*.jar',
                 fingerprint: true
-        ])
-        step([
-                $class     : 'JUnitResultArchiver',
-                testResults: 'angular-spring-boot-webapp/target/failsafe-reports/TEST*.xml'
-        ])
-        publishHTML(target: [
-                reportDir            : 'angular-spring-boot-webapp/target/site/serenity/',
-                reportFiles          : 'index.html',
-                reportName           : 'Serenity Test Report',
-                keepAll              : true,
-                alwaysLinkToLastBuild: true,
-                allowMissing         : false
         ])
     } catch (err) {
         rocketSend 'Error during pipeline'
