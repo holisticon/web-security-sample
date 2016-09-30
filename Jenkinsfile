@@ -1,3 +1,8 @@
+properties properties: [
+        [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '10']],
+        [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/holisticon/web-security-sample'],
+]
+
 node {
     env.JAVA_HOME = tool 'jdk-8-oracle'
     def mvnHome = tool 'Maven 3.3.1'
@@ -22,6 +27,8 @@ node {
 
     stage('Integration-Tests') {
         node('docker') {
+            env.JAVA_HOME = tool '/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/'
+              env.PATH = "${env.JAVA_HOME}/bin:/usr/local/bin/bin:${env.PATH}"
             sh "${mvnHome}/bin/mvn -Pdocker -Ddocker.host=http://127.0.0.1:2375  clean verify -Dmaven.test.failure.ignore"
         }
     }
