@@ -11,5 +11,13 @@
     <modules>
         <module>angular-spring-boot-webapp</module>
     </modules>
-
+         
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
+       </profile>
+   </profiles>
 </project>
