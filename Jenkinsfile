@@ -27,6 +27,7 @@ node {
 
     stage('Integration-Tests') {
         node('docker') {
+            checkout scm
             env.JAVA_HOME = '/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/'
             env.PATH = "${env.JAVA_HOME}/bin:/usr/local/bin/bin:${env.PATH}"
             sh "mvn -Pdocker -Ddocker.host=http://127.0.0.1:2375  clean verify -Dmaven.test.failure.ignore"
