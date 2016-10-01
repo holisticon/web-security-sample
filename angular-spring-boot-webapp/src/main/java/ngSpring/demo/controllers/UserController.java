@@ -92,28 +92,6 @@ public class UserController {
         return new ResponseEntity<Message>(new Message("The password has been properly changed."), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/controller/{customerId}", method = RequestMethod.GET)
-    public ResponseEntity<UserProfileDTO> getControllerByCustomerId(@PathVariable String customerId) throws EntityNotFoundException {
-        String userName = this.userRepository.findControllerUserNameByCustomerId(customerId);
-        User user = this.userRepository.findByUsernameAndDeletedFalse(userName);
-        if (user == null) {
-            throw new EntityNotFoundException();
-        }
-        UserProfileDTO userProfileDTO = this.userProfileTransformer.transformToDTO(user);
-        return new ResponseEntity<UserProfileDTO>(userProfileDTO, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/planer/{branchId}", method = RequestMethod.GET)
-    public ResponseEntity<UserProfileDTO> getPlanerByBranchId(@PathVariable String branchId) throws EntityNotFoundException {
-        String userName = this.userRepository.findPlanerUserNameByBranchId(branchId);
-        User user = this.userRepository.findByUsernameAndDeletedFalse(userName);
-        if (user == null) {
-            throw new EntityNotFoundException();
-        }
-        UserProfileDTO userProfileDTO = this.userProfileTransformer.transformToDTO(user);
-        return new ResponseEntity<UserProfileDTO>(userProfileDTO, HttpStatus.OK);
-    }
-
     private User checkUser() {
         Principal principal = SecurityContextHolder.getContext().getAuthentication();
         if (principal != null) {
