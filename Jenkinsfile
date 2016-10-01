@@ -54,7 +54,7 @@ node {
                     sh "mvn -PsecurityCheck install"
                 } catch (err) {
                     publishHTML(target: [
-                            reportDir            : 'angular-spring-boot-web-app/target',
+                            reportDir            : 'angular-spring-boot-webapp/target',
                             reportFiles          : 'dependency-check-report.html',
                             reportName           : 'OWASP Dependency Check Report',
                             keepAll              : true,
