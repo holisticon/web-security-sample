@@ -10,6 +10,7 @@ node {
 
     try {
         stage('Checkout') {
+            deleteDir()
             checkout scm
         }
 
@@ -27,6 +28,7 @@ node {
         }
 
         node('docker') {
+            deleteDir()
             checkout scm
 
             stage('Integration-Tests') {

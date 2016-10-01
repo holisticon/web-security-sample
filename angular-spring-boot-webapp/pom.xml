@@ -34,6 +34,8 @@
         <serenity.version>1.1.42</serenity.version>
         <threadCount.uitest>12</threadCount.uitest>
         <webdriver.driver>firefox</webdriver.driver>
+        <zap-java-api.version>2.4.2</zap-java-api.version>
+        <zaproxy-client.version>2.4-6</zaproxy-client.version>
 
         <!-- testing config -->
         <server.port>41180</server.port>
@@ -173,6 +175,22 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- tag::zap-java-maven[] -->
+        <dependency>
+            <groupId>net.continuumsecurity</groupId>
+            <artifactId>zap-java-api</artifactId>
+            <version>${zap-java-api.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/proxy-2.4.2-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.owasp</groupId>
+            <artifactId>zaproxy-client-api</artifactId>
+            <version>${zaproxy-client.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/zap-api-2.4-v6.jar</systemPath>
+        </dependency>
+        <!-- end::zap-java-maven[] -->
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-junit</artifactId>
