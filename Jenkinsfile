@@ -50,7 +50,7 @@ node {
             }
 
             stage('Security Checks') {
-                sh "/mvn -PsecurityCheck install"
+                sh "mvn -PsecurityCheck install"
                 publishHTML(target: [
                         reportDir            : 'angular-spring-boot-web-app/target',
                         reportFiles          : 'dependency-check-report.html',
