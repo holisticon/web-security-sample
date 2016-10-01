@@ -33,7 +33,7 @@ node {
                 env.JAVA_HOME = '/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/'
                 env.PATH = "${env.JAVA_HOME}/bin:/usr/local/bin/bin:${env.PATH}"
                 try {
-                    sh "mvn -Pdocker -Ddocker.host=http://127.0.0.1:2375  clean verify -Dmaven.test.failure.ignore"
+                    sh "mvn -Pdocker -Ddocker.host=http://127.0.0.1:2375  clean verify  -Dmaven.test.failure.ignore"
                 } catch (err) {
                     publishHTML(target: [
                             reportDir            : 'angular-spring-boot-webapp/target/site/serenity/',
@@ -51,7 +51,7 @@ node {
 
             stage('Security Checks') {
                 try {
-                    sh "mvn -PsecurityCheck install"
+                    sh "mvn -PsecurityCheck clean install"
                 } catch (err) {
                     publishHTML(target: [
                             reportDir            : 'angular-spring-boot-webapp/target',
