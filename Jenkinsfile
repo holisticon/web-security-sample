@@ -61,6 +61,7 @@ node {
                             alwaysLinkToLastBuild: true,
                             allowMissing         : false
                     ])
+                    throw err
                 }
             }
         }
