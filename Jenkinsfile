@@ -50,15 +50,18 @@ node {
             }
 
             stage('Security Checks') {
-                sh "mvn -PsecurityCheck install"
-                publishHTML(target: [
-                        reportDir            : 'angular-spring-boot-web-app/target',
-                        reportFiles          : 'dependency-check-report.html',
-                        reportName           : 'OWASP Dependency Check Report',
-                        keepAll              : true,
-                        alwaysLinkToLastBuild: true,
-                        allowMissing         : false
-                ])
+                try {
+                    sh "mvn -PsecurityCheck install"
+                } catch (err) {
+                    publishHTML(target: [
+                            reportDir            : 'angular-spring-boot-web-app/target',
+                            reportFiles          : 'dependency-check-report.html',
+                            reportName           : 'OWASP Dependency Check Report',
+                            keepAll              : true,
+                            alwaysLinkToLastBuild: true,
+                            allowMissing         : false
+                    ])
+                }
             }
         }
 
