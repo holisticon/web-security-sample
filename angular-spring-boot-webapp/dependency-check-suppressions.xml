@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+  <suppress>
+    <notes><![CDATA[
+        This suppresses any mysql cpe
+        ]]></notes>
+    <filePath regex="true">.*\.jar</filePath>
+    <cpe>cpe:/a:mysql:mysql</cpe>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+        This suppresses any mysql cpe
+        ]]></notes>
+    <filePath regex="true">.*\.jar</filePath>
+    <cpe>cpe:/a:jcraft:jsch</cpe>
+  </suppress>
+</suppressions>
