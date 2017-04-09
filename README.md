@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/holisticon/web-security-sample.svg?branch=master)](https://travis-ci.org/holisticon/web-security-sample) 
 [![Build status](https://ci.appveyor.com/api/projects/status/3yvah64er29s9oni?svg=true)](https://ci.appveyor.com/project/hypery2k/web-security-sample)
-[![Build Status](https://server.holisticon.de/jenkins/buildStatus/icon?job=Public/ContinuousSecurity_Demo)](https://server.holisticon.de/jenkins/job/Public/job/ContinuousSecurity_Demo) 
+[![Build Status](https://dev.holisticon.de/jenkins/buildStatus/icon?job=Public/ContinousSecurity_Demo/master)](https://dev.holisticon.de/jenkins/job/Public/job/ContinousSecurity_Demo/job/master/)
 
 ## Development-Setup
 
