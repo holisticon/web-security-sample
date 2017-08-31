@@ -24,7 +24,7 @@
         <skipITs>true</skipITs>
         <!-- java settings version -->
         <java.version>1.7</java.version>
-        <lombok.version>1.16.4</lombok.version>
+        <lombok.version>1.16.16</lombok.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-codec.version>1.10</commons-codec.version>
         <commons-io.version>1.3.2</commons-io.version>
@@ -43,13 +43,13 @@
         <webdriver.base.url>http://localhost:9080/</webdriver.base.url>
 
         <!-- frontend dependendies -->
-        <node.version>v4.6.0</node.version>
-        <npm.version>3.10.8</npm.version>
+        <node.version>v6.10.3</node.version>
+        <npm.version>3.10.10</npm.version>
 
         <!-- Maven Plugins -->
         <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
         <flyway-maven-plugin.version>3.2.1</flyway-maven-plugin.version>
-        <docker-maven-plugin.version>2.11.4</docker-maven-plugin.version>
+        <docker-maven-plugin.version>0.4.13</docker-maven-plugin.version>
         <frontend-maven-plugin.version>1.0</frontend-maven-plugin.version>
         <owasp-dependency-check.version>1.4.0</owasp-dependency-check.version>
     </properties>
@@ -412,21 +412,39 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <!-- tag::docker-maven-plugin[] -->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <imageName>continuous-delivery/demo</imageName>
+                    <baseImage>anapsix/alpine-java:8</baseImage>
+                    <!-- @formatter:off -->
+            <entryPoint>["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/${project.build.finalName}.jar","--flyway.url=jdbc:mysql://db/NGSPRING?useUnicode=true&amp;characterEncoding=utf8","--spring.datasource.url=jdbc:mysql://db/NGSPRING?useUnicode=true&amp;characterEncoding=utf8","--server.port=${server.port}"]</entryPoint>
+            <!-- @formatter:on -->
+                    <!-- copy the service's jar file from target into the root directory of the image -->
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+            <!-- end::docker-maven-plugin[] -->
         </plugins>
+        <!-- tag::docker-maven-plugin[] -->
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>com.alexecollins.docker</groupId>
+                    <groupId>com.spotify</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
                     <version>${docker-maven-plugin.version}</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.owasp</groupId>
-                    <artifactId>dependency-check-maven</artifactId>
-                    <version>${owasp-dependency-check.version}</version>
-                </plugin>
             </plugins>
         </pluginManagement>
+        <!-- end::docker-maven-plugin[] -->
     </build>
     <profiles>
         <profile>
@@ -491,35 +509,6 @@
             </build>
         </profile>
         <profile>
-            <id>mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <!-- tag::docker-mac-maven-plugin[] -->
-                        <plugin>
-                            <groupId>com.alexecollins.docker</groupId>
-                            <artifactId>docker-maven-plugin</artifactId>
-                            <version>${docker-maven-plugin.version}</version>
-                            <dependencies>
-                                <dependency>
-                                    <!-- set-up port forwarding if you're using boot2docker -->
-                                    <groupId>com.alexecollins.docker</groupId>
-                                    <artifactId>docker-java-orchestration-plugin-boot2docker</artifactId>
-                                    <version>${docker-maven-plugin.version}</version>
-                                </dependency>
-                            </dependencies>
-                        </plugin>
-                        <!-- end::docker-mac-maven-plugin[] -->
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
             <id>docker</id>
             <properties>
                 <skipITs>false</skipITs>
@@ -527,32 +516,6 @@
             </properties>
             <build>
                 <plugins>
-                    <!-- tag::docker-maven-plugin[] -->
-                    <plugin>
-                        <groupId>com.alexecollins.docker</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <configuration>
-                            <prefix>ngspring</prefix>
-                            <!-- (optional) remove images created by Dockerfile (default true) -->
-                            <removeIntermediateImages>true</removeIntermediateImages>
-                            <!-- (optional) do/do not cache images (default false), disable to
-                                get the freshest images -->
-                            <cache>true</cache>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>docker-prepare</id>
-                                <goals>
-                                    <goal>stop</goal>
-                                    <goal>clean</goal>
-                                    <goal>package</goal>
-                                    <goal>start</goal>
-                                </goals>
-                                <phase>package</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- end::docker-maven-plugin[] -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>sql-maven-plugin</artifactId>

@@ -12,4 +12,4 @@ install:
 
 script:
   - export DISPLAY=:99.0 && mvn clean test -q
-  - export DISPLAY=:99.0 && mvn -PsecurityCheck clean install
+  - export DISPLAY=:99.0 && mvn -PsecurityCheck install
