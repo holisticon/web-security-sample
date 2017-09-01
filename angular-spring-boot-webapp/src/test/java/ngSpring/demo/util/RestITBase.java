@@ -3,7 +3,6 @@ package ngSpring.demo.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.specification.RequestSpecification;
-import ngSpring.demo.AngularSpringApplication;
 import ngSpring.demo.domain.entities.User;
 import ngSpring.demo.repositories.EventRepository;
 import ngSpring.demo.repositories.UserRepository;
@@ -12,11 +11,10 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.text.ParseException;
@@ -25,11 +23,10 @@ import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.given;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-@SpringApplicationConfiguration(classes = AngularSpringApplication.class)
 @WebAppConfiguration
-@IntegrationTest("server.port:0")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class RestITBase {
 
     @Autowired
