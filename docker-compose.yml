@@ -2,7 +2,7 @@ version: '2.1'
 services:
 
   db:
-    container_name: continuousdelivery_db
+    container_name: continuoussecurity_db
     image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD
@@ -18,8 +18,8 @@ services:
         retries: 5
 
   ngspring:
-    container_name: continuousdelivery_demo
-    image: continuous-delivery/demo
+    container_name: continuoussecurity_demo
+    image: continuous-security/demo
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
     depends_on:

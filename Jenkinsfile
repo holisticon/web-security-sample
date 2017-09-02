@@ -72,7 +72,7 @@ timeout(60) {
                 stage('Security Checks') {
                     sh "mvn -PsecurityCheck install -DskipITs=true"
                     publishHTML(target: [
-                            reportDir            : 'target',
+                            reportDir            : 'angular-spring-boot-webapp/target',
                             reportFiles          : 'dependency-check-report.html',
                             reportName           : 'OWASP Dependency Check Report',
                             keepAll              : true,
@@ -83,7 +83,7 @@ timeout(60) {
                 }
             }
         } catch (e) {
-            rocketSend channel: 'holi-demos', emoji: ':rotating_light:', message: 'Fehler'
+            //rocketSend channel: 'holi-demos', emoji: ':rotating_light:', message: 'Fehler'
             throw e
         }
     }

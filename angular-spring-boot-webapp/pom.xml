@@ -416,7 +416,7 @@
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <configuration>
-                    <imageName>continuous-delivery/demo</imageName>
+                    <imageName>continuous-security/demo</imageName>
                     <baseImage>anapsix/alpine-java:8</baseImage>
                     <!-- @formatter:off -->
             <entryPoint>["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/${project.build.finalName}.jar","--flyway.url=jdbc:mysql://db/NGSPRING?useUnicode=true&amp;characterEncoding=utf8","--spring.datasource.url=jdbc:mysql://db/NGSPRING?useUnicode=true&amp;characterEncoding=utf8","--server.port=${server.port}"]</entryPoint>
