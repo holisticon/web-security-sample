@@ -86,6 +86,8 @@ timeout(60) {
                                 ])
                             }
                             finally {
+                                // stop images
+                                sh "./docker-stop.sh"
                                 archiveArtifacts artifacts: '*/target/zap-reports/*.xml'
                                 publishHTML(target: [
                                         reportDir            : 'angular-spring-boot-webapp/target/zap-reports',
@@ -97,11 +99,6 @@ timeout(60) {
                                 ])
                                 dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', failedTotalAll: '150', healthy: '', pattern: 'target/dependency-check-report.xml', unHealthy: ''
                             }
-                        }
-
-                        stage('Stop Docker Images') {
-                            // stop images
-                            sh "./docker-stop.sh"
                         }
                     }
                 }
