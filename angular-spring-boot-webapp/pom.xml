@@ -454,7 +454,7 @@
                             <!-- Configuration parameters -->
                             <zapHost>localhost</zapHost>
                             <zapPort>44444</zapPort>
-                            <failingRiskCodeThreshold>0</failingRiskCodeThreshold>
+                            <failingRiskCodeThreshold>5</failingRiskCodeThreshold>
                             <loginUrl>http://ngspring:41180/login</loginUrl>
                             <targetUrl>http://ngspring:41180/</targetUrl>
                             <authenticationType>form</authenticationType>
