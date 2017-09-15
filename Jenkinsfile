@@ -45,6 +45,8 @@ timeout(60) {
                             dir('angular-spring-boot-webapp') {
                                 sh "mvn package docker:build -Dmaven.test.skip"
                             }
+                            // build images
+                            sh "./docker-build-images.sh"
                             // run images
                             sh "./docker-run.sh"
                             sh "echo Waiting for containers to come up"
@@ -54,32 +56,54 @@ timeout(60) {
 
                         stage('Integration-Tests') {
                             dir('angular-spring-boot-webapp') {
-                                sh "mvn -Pdocker verify -Dmaven.test.failure.ignore -DskipUnitTests=true -DskipNode=true -Dwebdriver.base.url=${dockerServerUrl} -Dwebdriver.remote.url=http://localhost:5055/wd/hub -Dwebdriver.remote.driver=chrome"
-                                junit healthScaleFactor: 1.0, testResults: 'target/failsafe-reports/TEST*.xml'
+                                try {
+                                    sh "mvn -Pdocker,integration-tests verify -Dmaven.test.failure.ignore -Dwebdriver.base.url=${dockerServerUrl} -Dwebdriver.remote.url=http://localhost:5055/wd/hub -Dwebdriver.remote.driver=chrome"
+                                }
+                                finally {
+                                    junit healthScaleFactor: 1.0, testResults: 'target/failsafe-reports/TEST*.xml'
+                                    publishHTML(target: [
+                                            reportDir            : 'target/site/serenity/',
+                                            reportFiles          : 'index.html',
+                                            reportName           : 'Serenity Test Report',
+                                            keepAll              : true,
+                                            alwaysLinkToLastBuild: true,
+                                            allowMissing         : false
+                                    ])
+                                }
+                            }
+                        }
+
+                        stage('Security Checks') {
+                            try {
+                                sh "mvn -Pdocker,security-check verify"
                                 publishHTML(target: [
-                                        reportDir            : 'target/site/serenity/',
-                                        reportFiles          : 'index.html',
-                                        reportName           : 'Serenity Test Report',
+                                        reportDir            : 'angular-spring-boot-webapp/target',
+                                        reportFiles          : 'dependency-check-report.html',
+                                        reportName           : 'OWASP Dependency Check Report',
                                         keepAll              : true,
                                         alwaysLinkToLastBuild: true,
                                         allowMissing         : false
                                 ])
                             }
+                            finally {
+                                archiveArtifacts artifacts: '*/target/zap-reports/*.xml'
+                                publishHTML(target: [
+                                        reportDir            : 'angular-spring-boot-webapp/target/zap-reports',
+                                        reportFiles          : 'zapReport.html',
+                                        reportName           : 'ZAP Report',
+                                        keepAll              : true,
+                                        alwaysLinkToLastBuild: true,
+                                        allowMissing         : false
+                                ])
+                                dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', failedTotalAll: '150', healthy: '', pattern: 'target/dependency-check-report.xml', unHealthy: ''
+                            }
+                        }
+
+                        stage('Stop Docker Images') {
+                            // stop images
+                            sh "./docker-stop.sh"
                         }
                     }
-                }
-
-                stage('Security Checks') {
-                    sh "mvn -PsecurityCheck install -DskipITs=true"
-                    publishHTML(target: [
-                            reportDir            : 'angular-spring-boot-webapp/target',
-                            reportFiles          : 'dependency-check-report.html',
-                            reportName           : 'OWASP Dependency Check Report',
-                            keepAll              : true,
-                            alwaysLinkToLastBuild: true,
-                            allowMissing         : false
-                    ])
-                    dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', failedTotalAll: '150', healthy: '', pattern: 'target/dependency-check-report.xml', unHealthy: ''
                 }
             }
         } catch (e) {

@@ -20,8 +20,10 @@
     <!--end::maven-springboot-include[] -->
 
     <properties>
+        <skipNode>false</skipNode>
         <skipUnitTests>false</skipUnitTests>
         <skipITs>true</skipITs>
+        <skipSecurityTests>true</skipSecurityTests>
         <!-- java settings version -->
         <java.version>1.7</java.version>
         <lombok.version>1.16.16</lombok.version>
@@ -34,8 +36,6 @@
         <serenity.version>1.1.42</serenity.version>
         <threadCount.uitest>12</threadCount.uitest>
         <webdriver.driver>firefox</webdriver.driver>
-        <zap-java-api.version>2.4.2</zap-java-api.version>
-        <zaproxy-client.version>2.4-6</zaproxy-client.version>
 
         <!-- testing config -->
         <server.port>41180</server.port>
@@ -47,6 +47,7 @@
         <npm.version>3.10.10</npm.version>
 
         <!-- Maven Plugins -->
+        <zap-maven-plugin.version>0.1.0-SNAPSHOT</zap-maven-plugin.version>
         <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
         <flyway-maven-plugin.version>3.2.1</flyway-maven-plugin.version>
         <docker-maven-plugin.version>0.4.13</docker-maven-plugin.version>
@@ -167,22 +168,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- tag::zap-java-maven[] -->
-        <dependency>
-            <groupId>net.continuumsecurity</groupId>
-            <artifactId>zap-java-api</artifactId>
-            <version>${zap-java-api.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/proxy-2.4.2-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.owasp</groupId>
-            <artifactId>zaproxy-client-api</artifactId>
-            <version>${zaproxy-client.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/zap-api-2.4-v6.jar</systemPath>
-        </dependency>
-        <!-- end::zap-java-maven[] -->
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-junit</artifactId>
@@ -200,6 +185,7 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <configuration>
                     <format>ALL</format>
+                    <skip>${skipSecurityTests}</skip>
                     <skipTestScope>true</skipTestScope>
                     <suppressionFiles>
                         <suppressionFile>${project.basedir}/dependency-check-suppressions.xml</suppressionFile>
@@ -219,6 +205,7 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>${frontend-maven-plugin.version}</version>
                 <configuration>
+                    <skip>${skipNode}</skip>
                     <workingDirectory>${project.basedir}</workingDirectory>
                 </configuration>
                 <executions>
@@ -379,6 +366,7 @@
                 <artifactId>serenity-maven-plugin</artifactId>
                 <version>${serenity.version}</version>
                 <configuration>
+                    <skip>${skipITs}</skip>
                     <outputDirectory>${basedir}/target/site/serenity/</outputDirectory>
                     <sourceDirectory>${basedir}/target/site/serenity/</sourceDirectory>
                 </configuration>
@@ -447,19 +435,50 @@
     </build>
     <profiles>
         <profile>
-            <id>securityCheck</id>
+            <id>security-check</id>
             <properties>
+                <skipSecurityTests>false</skipSecurityTests>
+                <skipNode>true</skipNode>
                 <skipUnitTests>true</skipUnitTests>
                 <skipITs>true</skipITs>
                 <skipTests>true</skipTests>
             </properties>
             <build>
                 <plugins>
+                    <!-- tag::owasp-zap-include[] -->
+                    <plugin>
+                        <groupId>de.martinreinhardt-online</groupId>
+                        <artifactId>zap-maven-plugin</artifactId>
+                        <version>${zap-maven-plugin.version}</version>
+                        <configuration>
+                            <!-- Configuration parameters -->
+                            <zapHost>localhost</zapHost>
+                            <zapPort>44444</zapPort>
+                            <failingRiskCodeThreshold>0</failingRiskCodeThreshold>
+                            <loginUrl>http://ngspring:41180/login</loginUrl>
+                            <targetUrl>http://ngspring:41180/</targetUrl>
+                            <authenticationType>form</authenticationType>
+                            <username>user</username>
+                            <password>password</password>
+                            <skip>${skipSecurityTests}</skip>
+                            <shouldRunAjaxSpider>true</shouldRunAjaxSpider>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>analyze</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- end::owasp-zap-include[] -->
                     <!-- tag::owasp-maven-include[] -->
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
                         <configuration>
+                            <skip>${skipSecurityTests}</skip>
                             <failBuildOnCVSS>5</failBuildOnCVSS>
                         </configuration>
                         <executions>
@@ -477,6 +496,7 @@
                         <artifactId>frontend-maven-plugin</artifactId>
                         <version>${frontend-maven-plugin.version}</version>
                         <configuration>
+                            <skip>${skipSecurityTests}</skip>
                             <workingDirectory>${project.basedir}</workingDirectory>
                         </configuration>
                         <executions>
@@ -508,9 +528,16 @@
             </build>
         </profile>
         <profile>
+            <id>integration-tests</id>
+            <properties>
+                <skipUnitTests>true</skipUnitTests>
+                <skipNode>true</skipNode>
+                <skipITs>false</skipITs>
+            </properties>
+        </profile>
+        <profile>
             <id>docker</id>
             <properties>
-                <skipITs>false</skipITs>
                 <webdriver.base.url>http://localhost:${server.port}/</webdriver.base.url>
             </properties>
             <build>
