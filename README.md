@@ -1,6 +1,5 @@
 # Continuous Security Demo
 
-[![Build Status](https://travis-ci.org/holisticon/web-security-sample.svg?branch=master)](https://travis-ci.org/holisticon/web-security-sample) 
 [![Build Status](https://jenkins.holisticon.de/buildStatus/icon?job=Public/ContinousSecurity_Demo/master)](https://jenkins.holisticon.de/blue/organizations/jenkins/Public%2FContinousSecurity_Demo/branches/)
 [![Maintainability](https://api.codeclimate.com/v1/badges/83242587667b8a683ade/maintainability)](https://codeclimate.com/github/holisticon/web-security-sample/maintainability)
 
